@@ -11,7 +11,7 @@ type Response struct {
 
 func Handler() (Response, error) {
 	return Response{
-		Message: "Hello from Go!1.11",
+		Message: "Hello from Go!1.w",
 	}, nil
 }
 
