@@ -2,27 +2,31 @@ provider "aws" {
   profile = "3n-ab2-backend-nael"
   region  = "eu-west-3"
 }
-
+locals {
+  files=fileset("${path.module}/../fn/","*.go" )
+}
 
 module "lambda_function" {
   depends_on    = [null_resource.build_go]
+for_each = local.files
   source        = "terraform-aws-modules/lambda/aws"
-  function_name = "hello"
-  handler       = "hello"
+  function_name =trimsuffix(each.value,".go")
+  handler       = trimsuffix(each.value,".go")
   runtime       = "go1.x"
   publish       = true
 
-  source_path = "${path.module}/builds/hello"
+  source_path = "${path.module}/builds/${trimsuffix(each.value,".go")}"
 
 }
 
 resource "null_resource" "build_go" {
+  for_each = local.files
   triggers = {
-    file_version =filesha1( "${path.module}/../fn/hello.go")
+    file_version =filesha1( "${path.module}/../fn/${each.value}")
   }
 
   provisioner "local-exec" {
-    command = "GOOS=linux GOARCH=amd64 CGO_ENABLED=0   go build -o  ${path.module}/builds/hello  ${path.module}/../fn/hello.go"
+    command = "GOOS=linux GOARCH=amd64 CGO_ENABLED=0   go build -o  ${path.module}/builds/${trimsuffix(each.value,".go")}  ${path.module}/../fn/${each.value}"
   }
 }
 
