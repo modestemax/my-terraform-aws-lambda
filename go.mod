@@ -1,4 +1,4 @@
-module lambda-v3
+module lambda
 
 go 1.20
 

@@ -4,3 +4,4 @@
 /tf/terraform.tfstate
 /tf/terraform.tfstate.backup
 /tf/.DS_Store
+/tf/.builds/
